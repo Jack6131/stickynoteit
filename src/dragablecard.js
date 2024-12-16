@@ -3,13 +3,14 @@ import IconButton from '@mui/material/IconButton';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import TextField from '@mui/material/TextField';
 
-const DraggableCard = ({ id, initialX, initialY }) => {
+const DraggableCard = ({ id, initialX, initialY, header, content, updateCard }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
+  const [cardHeader, setCardHeader] = useState('');
   const [isBold, setIsBold] = useState(false);
   const editorRef = useRef(null);
   const dragOffset = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);
-
+  const [cardContent, setCardContent] = useState('');
   const toggleBold = () => {
     setIsBold(!isBold);
     if (editorRef.current) {
@@ -37,6 +38,18 @@ const DraggableCard = ({ id, initialX, initialY }) => {
 
   const handleMouseUp = () => {
     isDragging.current = false;
+  };
+  const handleHeaderChange = (e) => {
+    setCardHeader(e.target.value);
+    updateCard(id, e.target.value, cardContent); // Update parent with new header
+    console.log(cardHeader)
+  };
+
+  // Handle content change
+  const handleContentChange = (e) => {
+    setCardContent(e.target.innerText);
+    updateCard(id, cardHeader, e.target.innerText); // Update parent with new content
+    console.log(cardContent)
   };
 
   React.useEffect(() => {
@@ -86,12 +99,15 @@ const DraggableCard = ({ id, initialX, initialY }) => {
         label="Header"
         variant="outlined"
         fullWidth
+        value={cardHeader}
+        onChange={handleHeaderChange} 
         style={{ marginBottom: '10px', marginTop: '10px',zIndex:0}}
       />
 
       {/* Content Editable Div */}
       <div
         contentEditable
+        onInput={handleContentChange}
         style={{
           minHeight: '100px',
           textAlign: 'center',
@@ -100,6 +116,7 @@ const DraggableCard = ({ id, initialX, initialY }) => {
           outline: 'none',
         }}
       >
+        
         
       </div>
 
